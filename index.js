@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Bot, Keyboard } = require('grammy');
+const { Bot } = require('grammy');
 const cron = require('node-cron');
 const fs = require('fs');
 const path = require('path');
@@ -83,7 +83,7 @@ function saveSubscriber(chatId) {
   }
 }
 
-// Генерация случайного фразового микса
+// Генерация случайной комбинации
 function generateMessage() {
   const p1 = PART1[Math.floor(Math.random() * PART1.length)];
   const p2 = PART2[Math.floor(Math.random() * PART2.length)];
@@ -94,27 +94,12 @@ function generateMessage() {
 
 const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN || "8994511117:AAEmLO_ymAMgn_ZJwqbErtgTpGZLEu-_NHY");
 
-// Нижняя клавиатура с кнопкой генерации
-const mainKeyboard = new Keyboard()
-  .text('🎲 Генерация')
-  .resized();
-
 bot.command('start', async (ctx) => {
   saveSubscriber(ctx.chat.id);
-  await ctx.reply(
-    'Привет, принцесса! Я буду напоминать тебе пить таблеточку каждый день в 20:00 ❤️',
-    { reply_markup: mainKeyboard }
-  );
+  await ctx.reply('Привет, принцесса! Я буду напоминать тебе пить таблеточку каждый день в 20:00 ❤️');
 });
 
-// Нажатие на кнопку "Генерация"
-bot.hears('🎲 Генерация', async (ctx) => {
-  saveSubscriber(ctx.chat.id);
-  const msg = generateMessage();
-  await ctx.reply(msg);
-});
-
-// Ежедневный крон в 20:00 по ИРКУТСКОМУ ВРЕМЕНИ (Asia/Irkutsk UTC+8)
+// Ежедневная рассылка в 20:00 по Иркутску (Asia/Irkutsk UTC+8)
 cron.schedule('0 20 * * *', async () => {
   const subscribers = loadSubscribers();
   for (const chatId of subscribers) {
@@ -132,9 +117,10 @@ cron.schedule('0 20 * * *', async () => {
 async function start() {
   try {
     await bot.api.deleteWebhook({ drop_pending_updates: true });
+    await bot.api.setMyCommands([]);
   } catch (e) {}
 
-  console.log('🤖 Бот-напоминалка успешно запущен!');
+  console.log('🤖 Бот-напоминалка запущен (только рассылка в 20:00)!');
   await bot.start();
 }
 
