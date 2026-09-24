@@ -1,0 +1,14 @@
+{
+  "name": "gf-pill-reminder-bot",
+  "version": "1.0.0",
+  "description": "Pill reminder bot with cute compliments",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "grammy": "^1.21.1",
+    "node-cron": "^3.0.3"
+  }
+}
