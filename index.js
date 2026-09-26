@@ -65,7 +65,12 @@ const PART3 = [
 
 function loadSubscribers() {
   if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify([]));
+    try {
+      fs.writeFileSync(DATA_FILE, JSON.stringify([]));
+    } catch (e) {
+      console.error("Ошибка при создании файла subscribers.json:", e.message);
+      return [];
+    }
     return [];
   }
   try {
@@ -79,7 +84,11 @@ function saveSubscriber(chatId) {
   const subs = loadSubscribers();
   if (!subs.includes(chatId)) {
     subs.push(chatId);
-    fs.writeFileSync(DATA_FILE, JSON.stringify(subs, null, 2));
+    try {
+      fs.writeFileSync(DATA_FILE, JSON.stringify(subs, null, 2));
+    } catch (e) {
+      console.error("Ошибка сохранения подписчика:", e.message);
+    }
   }
 }
 
@@ -120,7 +129,7 @@ async function start() {
     await bot.api.setMyCommands([]);
   } catch (e) {}
 
-  console.log('🤖 Бот-напоминалка запущен (только рассылка в 20:00)!');
+  console.log('🤖 Бот-напоминалка успешно запущен!');
   await bot.start();
 }
 
